@@ -4,13 +4,15 @@ import {
   JtdDefinitions,
   JtdShared,
   JtdT,
-  Schema,
-} from "./index.ts";
-import { SKeys } from "./SKeys.ts";
-import { Static } from "./Static.ts";
-import { Narrow } from "./toolbox.ts";
+  Forms,
+  Static,
+  Narrow,
+} from "./_api.ts";
 
 export const Def = Symbol.for("JtdType.Def");
+
+/** Returns the string keys of an object */
+type SKeys<T> = Extract<keyof T, string>;
 
 type CompiledDefs<D extends JtdDefinitions> = {
   [k in keyof D]: Static<D[k]>;
@@ -19,7 +21,7 @@ type CompiledDefs<D extends JtdDefinitions> = {
 export type JtdRef<
   DefT extends JtdDefinitions = JtdDefinitions,
   Ref extends SKeys<DefT> = SKeys<DefT>,
-  CDef extends CompiledDefs<DefT> = CompiledDefs<DefT>,
+  CDef extends CompiledDefs<DefT> = CompiledDefs<DefT>
 > = JtdT<"Ref"> & {
   [Def]: CDef;
   ref: Ref;
@@ -42,11 +44,11 @@ export type StaticRef<R extends JtdRef> = R[typeof Def][R["ref"]];
 export function Ref<
   DefT extends JtdDefinitions,
   Ref extends SKeys<DefT>,
-  O extends JtdShared,
+  O extends JtdShared
 >(definitions: DefT, ref: Ref, opts?: Narrow<O>) {
   if (!Object.hasOwn(definitions, ref)) {
     throw new SyntaxError(
-      `Invalid Reference Key ${ref}, value not found in definition`,
+      `Invalid Reference Key ${ref}, value not found in definition`
     );
   }
   const s = CreateSchemaBase("Ref", opts);
@@ -62,12 +64,13 @@ export function Ref<
 //
 
 if (import.meta.main) {
-  type ExpandType<T> = T extends infer O ? { [k in keyof O]: ExpandType<O[k]> }
+  type ExpandType<T> = T extends infer O
+    ? { [k in keyof O]: ExpandType<O[k]> }
     : never;
 
   const definition = CreateDefinition({
-    example: Schema.Empty({ metadata: {} }),
-    example2: Schema.Properties({ foo: Schema.Type("float32") }, {}, false),
+    example: Forms.Empty({ metadata: {} }),
+    example2: Forms.Properties({ foo: Forms.Type("float32") }, {}, false),
   });
 
   type TestType = StaticRef<typeof TestType>;

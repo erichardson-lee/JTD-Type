@@ -1,5 +1,4 @@
-import { CreateSchemaBase, JtdShared, JtdT } from "./index.ts";
-import type { Narrow } from "./toolbox.ts";
+import { CreateSchemaBase, JtdShared, JtdT, Narrow } from "./_api.ts";
 
 export type JtdEmpty = JtdT<"Empty">;
 

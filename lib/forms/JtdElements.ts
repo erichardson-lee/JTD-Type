@@ -3,10 +3,10 @@ import {
   JtdSchema,
   JtdShared,
   JtdT,
-  Schema,
-} from "./index.ts";
-import { Static } from "./Static.ts";
-import { Narrow } from "./toolbox.ts";
+  Static,
+  Narrow,
+  Forms,
+} from "./_api.ts";
 
 // deno-lint-ignore no-explicit-any
 export type JtdElements<E extends JtdSchema = any> = JtdT<"Elements"> & {
@@ -23,7 +23,7 @@ export type StaticElements<E extends JtdElements> = Static<E["elements"]>[];
  */
 export function Elements<E extends JtdSchema, O extends JtdShared>(
   elements: E,
-  opts?: Narrow<O>,
+  opts?: Narrow<O>
 ) {
   const s = CreateSchemaBase("Elements", opts);
   return Object.assign(s, { elements }) as JtdElements<E> & O;
@@ -34,7 +34,7 @@ export function Elements<E extends JtdSchema, O extends JtdShared>(
 ///
 if (import.meta.main) {
   type TestType = StaticElements<typeof TestType>;
-  const TestType = Elements(Schema.Type("float64"));
+  const TestType = Elements(Forms.Type("float64"));
   console.log(JSON.stringify(TestType, undefined, 2));
 
   const _example: TestType = [1, 2, 3, 4, 5];

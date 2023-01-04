@@ -1,9 +1,17 @@
 import type { Narrow } from "https://deno.land/x/ts_toolbelt_unofficial@1.1.0/sources/Function/Narrow.ts";
 export { Narrow };
 
-import { JtdSchema, JtdShared, Forms, Kinds, Kind } from "../index.ts";
-export type { JtdSchema, JtdShared };
-export { Forms };
+import { Kinds, Kind, JtdShared } from "../index.ts";
+
+export type {
+  JtdSchema,
+  JtdShared,
+  SchemaObj,
+  JtdDefinitions,
+} from "../index.ts";
+export { Forms, CreateDefinition } from "../index.ts";
+
+export type { Static } from "../static.ts";
 
 /** JTD type (Util Type to add Shared Schema & Kind) */
 export type JtdT<Type extends Kinds> = JtdShared & { [Kind]: Type };

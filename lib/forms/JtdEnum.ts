@@ -1,9 +1,9 @@
-import { CreateSchemaBase, JtdShared, JtdT } from "./index.ts";
-import { Narrow } from "./toolbox.ts";
+import { CreateSchemaBase, JtdShared, JtdT, Narrow } from "./_api.ts";
 
 export type JtdEnum<E extends string = string> = JtdT<"Enum"> & { enum: E[] };
 
-export type StaticEnum<E extends JtdEnum> = E["enum"] extends (infer K)[] ? K
+export type StaticEnum<E extends JtdEnum> = E["enum"] extends (infer K)[]
+  ? K
   : never;
 
 /**
@@ -14,7 +14,7 @@ export type StaticEnum<E extends JtdEnum> = E["enum"] extends (infer K)[] ? K
  */
 export function Enum<E extends string, O extends JtdShared>(
   values: Narrow<E[]>,
-  opts?: Narrow<O>,
+  opts?: Narrow<O>
 ) {
   if (new Set(values).size !== values.length) {
     throw new SyntaxError(`Enum has non-unique values`);

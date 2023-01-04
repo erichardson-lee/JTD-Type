@@ -3,10 +3,10 @@ import {
   JtdSchema,
   JtdShared,
   JtdT,
-  Schema,
-} from "./index.ts";
-import { Static } from "./Static.ts";
-import { Narrow } from "./toolbox.ts";
+  Forms,
+  Static,
+  Narrow,
+} from "./_api.ts";
 
 // deno-lint-ignore no-explicit-any
 export type JtdValues<V extends JtdSchema = any> = JtdT<"Values"> & {
@@ -26,7 +26,7 @@ export type StaticValues<V extends JtdValues> = Record<
  */
 export function Values<V extends JtdSchema, O extends JtdShared = JtdShared>(
   values: V,
-  opts?: Narrow<O>,
+  opts?: Narrow<O>
 ) {
   const s = CreateSchemaBase("Values", opts);
   return Object.assign(s, { values }) as JtdValues<V> & O;
@@ -37,7 +37,7 @@ export function Values<V extends JtdSchema, O extends JtdShared = JtdShared>(
 ///
 if (import.meta.main) {
   type TestType = StaticValues<typeof TestType>;
-  const TestType = Values(Schema.Type("float64"));
+  const TestType = Values(Forms.Type("float64"));
   console.log(JSON.stringify(TestType, undefined, 2));
 
   const _example: TestType = {

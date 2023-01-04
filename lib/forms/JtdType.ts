@@ -1,5 +1,4 @@
-import { CreateSchemaBase, JtdShared, JtdT } from "./index.ts";
-import { Narrow } from "./toolbox.ts";
+import { CreateSchemaBase, JtdShared, JtdT, Narrow } from "./_api.ts";
 
 export type JtdTypes =
   | "boolean"
@@ -24,9 +23,12 @@ export type StaticType<T extends JtdType> = T["type"] extends
   | "int16"
   | "uint16"
   | "int32"
-  | "uint32" ? number
-  : T["type"] extends "boolean" ? boolean
-  : T["type"] extends "string" | "timestamp" ? string
+  | "uint32"
+  ? number
+  : T["type"] extends "boolean"
+  ? boolean
+  : T["type"] extends "string" | "timestamp"
+  ? string
   : never;
 
 /**
@@ -37,7 +39,7 @@ export type StaticType<T extends JtdType> = T["type"] extends
  */
 export function Type<T extends JtdTypes, O extends JtdShared>(
   type: T,
-  opts?: Narrow<O> | undefined,
+  opts?: Narrow<O> | undefined
 ) {
   const s = CreateSchemaBase("Type", opts, { type });
   return s as JtdType<T> & O;
