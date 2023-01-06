@@ -8,7 +8,7 @@ import {
   JtdDiscriminator,
   StaticDiscriminator,
 } from "./forms/JtdDiscriminator.ts";
-import { JtdSchema } from "./index.ts";
+import { JtdSchema } from "./forms/_api.ts";
 
 export type Static<T extends JtdSchema | undefined> = T extends JtdSchema ? 
     | (T extends { nullable: true } ? null : never)

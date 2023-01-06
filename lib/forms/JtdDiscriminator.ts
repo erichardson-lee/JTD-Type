@@ -111,6 +111,7 @@ export function Discriminator<
     mapping: Object.values(mapping).map((variant) =>
       Forms.Properties(
         variant.properties,
+        //@ts-expect-error Invalid Type Mapping, this _will_ work though
         variant.optionalProperties,
         variant.additionalKeys,
         { metadata: variant.metadata },
