@@ -41,8 +41,8 @@ export function Type<T extends JtdTypes, O extends JtdShared>(
   type: T,
   opts?: Narrow<O> | undefined
 ) {
-  const s = CreateSchemaBase("Type", opts, { type });
-  return s as JtdType<T> & O;
+  const s = CreateSchemaBase("Type", opts);
+  return Object.assign(s, { type }) as JtdType<T> & O;
 }
 
 //
