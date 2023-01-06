@@ -53,7 +53,7 @@ type Variant<
     [k in oKeys]: JtdSchema;
   };
 
-  additionalKeys: Add;
+  additionalProperties: Add;
   metadata?: JtdShared["metadata"];
 };
 
@@ -67,7 +67,7 @@ type CompileVariants<Vars extends VarMap<{}>> = {
   [k in keyof Vars]: JtdProperties<
     Vars[k]["properties"],
     Vars[k]["optionalProperties"],
-    Vars[k]["additionalKeys"]
+    Vars[k]["additionalProperties"]
   >;
 };
 
@@ -110,10 +110,12 @@ export function Discriminator<
     discriminator,
     mapping: Object.values(mapping).map((variant) =>
       Forms.Properties(
-        variant.properties,
-        //@ts-expect-error Invalid Type Mapping, this _will_ work though
-        variant.optionalProperties,
-        variant.additionalKeys,
+        {
+          properties: variant.properties,
+          //@ts-expect-error Intentional Type Mismatch
+          optionalProperties: variant.optionalProperties,
+          additionalProperties: variant.additionalProperties,
+        },
         { metadata: variant.metadata },
       )
     ),
@@ -131,12 +133,12 @@ if (import.meta.main) {
         foo: Forms.Empty(),
       },
       optionalProperties: {},
-      additionalKeys: false,
+      additionalProperties: false,
     },
     bar: {
       properties: { brightness: Forms.Type("int8") },
       optionalProperties: { height: Forms.Type("int16") },
-      additionalKeys: false,
+      additionalProperties: false,
     },
   });
   console.log(JSON.stringify(TestType, undefined, 2));

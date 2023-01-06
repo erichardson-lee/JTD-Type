@@ -53,31 +53,37 @@ export function Properties<
   AddProps extends boolean,
   O extends JtdShared,
 >(
-  properties: Props,
-  optionalProperties: OProps,
-  additionalProperties: AddProps,
+  data: {
+    properties: Props;
+    optionalProperties?: OProps;
+    additionalProperties?: AddProps;
+  } | {
+    properties?: Props;
+    optionalProperties: OProps;
+    additionalProperties?: AddProps;
+  },
   opts?: Narrow<O>,
 ) {
-  const PKeys = new Set(Object.keys(properties));
-  const overlap = Object.keys(optionalProperties).filter((key) =>
-    PKeys.has(key)
-  );
-
-  if (overlap.length > 0) {
-    throw new SyntaxError(
-      "Properties and Optional Properties have the shared keys, " +
-        JSON.stringify(overlap) +
-        " this violates JTD Rules",
+  if (
+    Object.hasOwn(data, "properties") &&
+    Object.hasOwn(data, "optionalProperties")
+  ) {
+    const PKeys = new Set(Object.keys(data.properties!));
+    const overlap = Object.keys(data.optionalProperties!).filter((key) =>
+      PKeys.has(key)
     );
+
+    if (overlap.length > 0) {
+      throw new SyntaxError(
+        "Properties and Optional Properties have the shared keys, " +
+          JSON.stringify(overlap) +
+          " this violates JTD Rules",
+      );
+    }
   }
 
   const s = CreateSchemaBase("Properties", opts);
-
-  return Object.assign(s, {
-    properties,
-    optionalProperties,
-    additionalProperties,
-  }) as JtdProperties<Props, OProps, AddProps> & O;
+  return Object.assign(s, data) as JtdProperties<Props, OProps, AddProps> & O;
 }
 
 //
@@ -86,9 +92,11 @@ export function Properties<
 if (import.meta.main) {
   type TestType = StaticProperties<typeof TestType>;
   const TestType = Properties(
-    { test: Forms.Empty(), foo: Forms.Type("float64") },
-    { bar: Forms.Type("int8", { nullable: true }) },
-    false,
+    {
+      properties: { test: Forms.Empty(), foo: Forms.Type("float64") },
+      optionalProperties: { bar: Forms.Type("int8", { nullable: true }) },
+      additionalProperties: false,
+    },
   );
   console.log(JSON.stringify(TestType, undefined, 2));
 
