@@ -1,16 +1,63 @@
+// deno-lint-ignore-file no-explicit-any
+
+import { JtdElements } from "./index.ts";
+import { JtdDiscriminator } from "./JtdDiscriminator.ts";
+import { JtdEmpty } from "./JtdEmpty.ts";
+import { JtdEnum } from "./JtdEnum.ts";
+import { JtdProperties } from "./JtdProperties.ts";
+import { JtdRef } from "./JtdRef.ts";
+import { JtdType } from "./JtdType.ts";
+import { JtdValues } from "./JtdValues.ts";
+
 import type { Narrow } from "https://deno.land/x/ts_toolbelt_unofficial@1.1.0/sources/Function/Narrow.ts";
 export { Narrow };
 
-import { JtdShared, Kind, Kinds } from "../index.ts";
+export const Kind = Symbol.for("JtdType.Kind");
 
-export type {
-  JtdDefinitions,
-  JtdSchema,
-  JtdShared,
-  SchemaObj,
-} from "../index.ts";
-export { CreateDefinition, Forms } from "../index.ts";
+export type JtdRoot<Definitions extends JtdDefinitions | undefined> =
+  & JtdSchema
+  & {
+    // Def only keys
+    definitions: Definitions;
+  };
 
+export type JtdSchema =
+  & (JtdShared & { [Kind]: Kinds })
+  & (
+    | JtdRef<any>
+    | JtdType
+    | JtdEnum
+    | JtdElements<any>
+    | JtdProperties<any, any, any>
+    | JtdValues<any>
+    | JtdDiscriminator<string, any>
+    | JtdEmpty
+  );
+export type SchemaObj = { [k: string]: JtdSchema | undefined };
+export type JtdDefinitions = { [k: string]: JtdSchema };
+
+export function CreateDefinition<D extends { [k: string]: { [Kind]: Kinds } }>(
+  definition: D,
+) {
+  return definition as D & JtdDefinitions;
+}
+
+export type JtdShared = {
+  metadata?: { [k: string]: unknown } | undefined;
+  nullable?: boolean | undefined;
+};
+
+export type Kinds =
+  | "Ref"
+  | "Type"
+  | "Enum"
+  | "Elements"
+  | "Properties"
+  | "Values"
+  | "Discriminator"
+  | "Empty";
+
+export * as Forms from "../forms_functions.ts";
 export type { Static } from "../static.ts";
 
 /** JTD type (Util Type to add Shared Schema & Kind) */
