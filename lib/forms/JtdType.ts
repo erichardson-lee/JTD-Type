@@ -23,12 +23,9 @@ export type StaticType<T extends JtdType> = T["type"] extends
   | "int16"
   | "uint16"
   | "int32"
-  | "uint32"
-  ? number
-  : T["type"] extends "boolean"
-  ? boolean
-  : T["type"] extends "string" | "timestamp"
-  ? string
+  | "uint32" ? number
+  : T["type"] extends "boolean" ? boolean
+  : T["type"] extends "string" | "timestamp" ? string
   : never;
 
 /**
@@ -39,7 +36,7 @@ export type StaticType<T extends JtdType> = T["type"] extends
  */
 export function Type<T extends JtdTypes, O extends JtdShared>(
   type: T,
-  opts?: Narrow<O> | undefined
+  opts?: Narrow<O> | undefined,
 ) {
   const s = CreateSchemaBase("Type", opts);
   return Object.assign(s, { type }) as JtdType<T> & O;

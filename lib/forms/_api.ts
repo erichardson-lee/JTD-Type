@@ -1,15 +1,15 @@
 import type { Narrow } from "https://deno.land/x/ts_toolbelt_unofficial@1.1.0/sources/Function/Narrow.ts";
 export { Narrow };
 
-import { Kinds, Kind, JtdShared } from "../index.ts";
+import { JtdShared, Kind, Kinds } from "../index.ts";
 
 export type {
+  JtdDefinitions,
   JtdSchema,
   JtdShared,
   SchemaObj,
-  JtdDefinitions,
 } from "../index.ts";
-export { Forms, CreateDefinition } from "../index.ts";
+export { CreateDefinition, Forms } from "../index.ts";
 
 export type { Static } from "../static.ts";
 
@@ -18,7 +18,7 @@ export type JtdT<Type extends Kinds> = JtdShared & { [Kind]: Type };
 
 export function CreateSchemaBase<K extends Kinds, O extends JtdShared>(
   kind: K,
-  opts: Narrow<O> | undefined
+  opts: Narrow<O> | undefined,
 ): { [Kind]: K } & NonNullable<O> {
   //@ts-expect-error Typing Weirdness
   return {

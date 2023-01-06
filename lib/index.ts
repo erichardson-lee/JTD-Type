@@ -16,13 +16,15 @@ export const Kind = Symbol.for("JtdType.Kind");
 export * as Forms from "./forms.ts";
 
 export type JtdRoot<Definitions extends JtdDefinitions | undefined> =
-  JtdSchema & {
+  & JtdSchema
+  & {
     // Def only keys
     definitions: Definitions;
   };
 
-export type JtdSchema = (JtdShared & { [Kind]: Kinds }) &
-  (
+export type JtdSchema =
+  & (JtdShared & { [Kind]: Kinds })
+  & (
     | JtdRef<any>
     | JtdType
     | JtdEnum
@@ -36,7 +38,7 @@ export type SchemaObj = { [k: string]: JtdSchema | undefined };
 export type JtdDefinitions = { [k: string]: JtdSchema };
 
 export function CreateDefinition<D extends { [k: string]: { [Kind]: Kinds } }>(
-  definition: D
+  definition: D,
 ) {
   return definition as D & JtdDefinitions;
 }

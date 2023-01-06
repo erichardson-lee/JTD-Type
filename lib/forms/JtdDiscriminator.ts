@@ -1,12 +1,12 @@
 import { JtdProperties, StaticProperties } from "./JtdProperties.ts";
 import {
   CreateSchemaBase,
+  Forms,
+  Invalid,
   JtdSchema,
   JtdShared,
   JtdT,
-  Invalid,
   Narrow,
-  Forms,
 } from "./_api.ts";
 
 type ExpandType<T> = T extends infer O ? { [k in keyof O]: O[k] } : never;
@@ -14,7 +14,7 @@ type ExpandType<T> = T extends infer O ? { [k in keyof O]: O[k] } : never;
 export type JtdDiscriminator<
   Discriminator extends string = string,
   // deno-lint-ignore no-explicit-any ban-types
-  VMap extends { [key: string]: JtdProperties<any, any, any> } = {}
+  VMap extends { [key: string]: JtdProperties<any, any, any> } = {},
 > = ExpandType<
   JtdT<"Discriminator"> & {
     discriminator: Discriminator;
@@ -26,13 +26,12 @@ type GetVariants<
   // deno-lint-ignore no-explicit-any
   VMap extends { [key: string]: JtdProperties<any, any, any> },
   DStr extends string,
-  Variant extends keyof VMap
-> = Variant extends string
-  ? ExpandType<
-      {
-        [d in DStr]: Variant;
-      } & StaticProperties<VMap[Variant]>
-    >
+  Variant extends keyof VMap,
+> = Variant extends string ? ExpandType<
+    {
+      [d in DStr]: Variant;
+    } & StaticProperties<VMap[Variant]>
+  >
   : Invalid<"Non String Key Found on Object", Variant>;
 
 export type StaticDiscriminator<D extends JtdDiscriminator> = GetVariants<
@@ -44,7 +43,7 @@ export type StaticDiscriminator<D extends JtdDiscriminator> = GetVariants<
 type Variant<
   Keys extends string = string,
   oKeys extends string = string,
-  Add extends boolean = boolean
+  Add extends boolean = boolean,
 > = {
   properties: {
     [k in Keys]: JtdSchema;
@@ -79,16 +78,18 @@ export function Discriminator<
       [d in D]?: Invalid<"Cannot have the discriminator in the properties">;
     };
     optionalProperties: {
-      [d in D]?: Invalid<"Cannot have the discriminator in the optional properties">;
+      [d in D]?: Invalid<
+        "Cannot have the discriminator in the optional properties"
+      >;
     };
   }>,
-  O extends JtdShared = JtdShared
+  O extends JtdShared = JtdShared,
 >(discriminator: D, mapping: VMap, opts?: Narrow<O>) {
   const collisions = Object.entries(mapping)
     .filter(
       ([_key, value]) =>
         Object.hasOwn(value?.properties, discriminator) ||
-        Object.hasOwn(value?.optionalProperties, discriminator)
+        Object.hasOwn(value?.optionalProperties, discriminator),
     )
     .map(([k, v]) => `[${k}: ${v}]`);
 
@@ -99,7 +100,7 @@ export function Discriminator<
         " as this violates JTD Rules " +
         "(Discriminator can't be a key in the values)" +
         "included in the following variants: " +
-        collisions.join(", ")
+        collisions.join(", "),
     );
   }
 
@@ -112,7 +113,7 @@ export function Discriminator<
         variant.properties,
         variant.optionalProperties,
         variant.additionalKeys,
-        { metadata: variant.metadata }
+        { metadata: variant.metadata },
       )
     ),
   }) as JtdDiscriminator<D, CompileVariants<VMap>> & O;

@@ -1,11 +1,11 @@
 import {
   CreateSchemaBase,
+  Forms,
   JtdSchema,
   JtdShared,
   JtdT,
-  Forms,
-  Static,
   Narrow,
+  Static,
 } from "./_api.ts";
 
 // deno-lint-ignore no-explicit-any
@@ -26,7 +26,7 @@ export type StaticValues<V extends JtdValues> = Record<
  */
 export function Values<V extends JtdSchema, O extends JtdShared = JtdShared>(
   values: V,
-  opts?: Narrow<O>
+  opts?: Narrow<O>,
 ) {
   const s = CreateSchemaBase("Values", opts);
   return Object.assign(s, { values }) as JtdValues<V> & O;
