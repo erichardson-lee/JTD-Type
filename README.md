@@ -1,8 +1,9 @@
 # Jtd Type
 
-This library is designed to be a [Typebox](https://github.com/sinclairzx81/typebox)
-style schema creator for generation of [RFC8927](https://www.rfc-editor.org/rfc/rfc8927)
-compliant Json Type Definition schemas.
+This library is designed to be a
+[Typebox](https://github.com/sinclairzx81/typebox) style schema creator for
+generation of [RFC8927](https://www.rfc-editor.org/rfc/rfc8927) compliant Json
+Type Definition schemas.
 
 ## Usage
 
@@ -37,12 +38,4 @@ const print = (d: unknown) => console.log(JSON.stringify(d, undefined, 2));
 
 print(UserInfo); // Log the Data type
 print(fred); // Log the Data
-```
-
-## Development
-
-### Release Process
-
-```shell
-deno task npm_build
 ```
