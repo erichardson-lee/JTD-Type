@@ -22,15 +22,3 @@ export function Enum<E extends string, O extends JtdShared>(
   const s = CreateSchemaBase("Enum", opts);
   return Object.assign(s, { enum: values }) as JtdEnum<E> & O;
 }
-
-//
-// Testing
-//
-if (import.meta.main) {
-  type TestType = StaticEnum<typeof TestType>;
-  const TestType = Enum(["test", "foo"]);
-  console.log(JSON.stringify(TestType, undefined, 2));
-
-  const _example: TestType = "foo";
-  const _example2: TestType = "test";
-}

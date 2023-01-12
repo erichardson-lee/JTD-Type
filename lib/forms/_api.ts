@@ -77,6 +77,33 @@ export function CreateSchemaBase<K extends Kinds, O extends JtdShared>(
   };
 }
 
+type ExpandType<T> = T extends infer O ? { [k in keyof O]: O[k] } : never;
+
+// deno-lint-ignore ban-types
+function _sanitiseObj(o: object): object {
+  return Object.fromEntries(
+    Object.entries(o)
+      .map(([key, value]) => {
+        if (typeof value === "object" && value != null) {
+          return [key, _sanitiseObj(value)];
+        }
+
+        return [key, value];
+      })
+      .filter(([_key, value]) => {
+        if (typeof value === "undefined") return false;
+
+        return true;
+      }),
+  );
+}
+
+export function Sanitise<S extends JtdSchema>(
+  schema: S,
+): ExpandType<Omit<S, typeof Kind>> {
+  return _sanitiseObj(schema) as ExpandType<Omit<S, typeof Kind>>;
+}
+
 export type Invalid<M extends string, D = unknown> =
   | never
   | { __error_message: M; __data: D };

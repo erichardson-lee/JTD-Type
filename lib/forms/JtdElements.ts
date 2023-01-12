@@ -1,6 +1,5 @@
 import {
   CreateSchemaBase,
-  Forms,
   JtdSchema,
   JtdShared,
   JtdT,
@@ -27,15 +26,4 @@ export function Elements<E extends JtdSchema, O extends JtdShared>(
 ) {
   const s = CreateSchemaBase("Elements", opts);
   return Object.assign(s, { elements }) as JtdElements<E> & O;
-}
-
-//
-// Testing
-///
-if (import.meta.main) {
-  type TestType = StaticElements<typeof TestType>;
-  const TestType = Elements(Forms.Type("float64"));
-  console.log(JSON.stringify(TestType, undefined, 2));
-
-  const _example: TestType = [1, 2, 3, 4, 5];
 }

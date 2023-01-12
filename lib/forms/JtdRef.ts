@@ -1,7 +1,5 @@
 import {
-  CreateDefinition,
   CreateSchemaBase,
-  Forms,
   JtdDefinitions,
   JtdShared,
   JtdT,
@@ -57,40 +55,4 @@ export function Ref<
     [Def]: definitions as CompiledDefs<DefT>,
     ref,
   }) as JtdRef<DefT, Ref, CompiledDefs<DefT>> & O;
-}
-
-//
-// Tests
-//
-
-if (import.meta.main) {
-  type ExpandType<T> = T extends infer O ? { [k in keyof O]: ExpandType<O[k]> }
-    : never;
-
-  const definition = CreateDefinition({
-    example: Forms.Empty({ metadata: {} }),
-    example2: Forms.Properties({ foo: Forms.Type("float32") }, {}, false),
-  });
-
-  type TestType = StaticRef<typeof TestType>;
-  const TestType = Ref(definition, "example");
-
-  console.log(JSON.stringify(TestType, undefined, 2));
-
-  // Should allow anything, since it's an empty schema
-  const _example: TestType = {
-    foo: "bar",
-    baz: 1243,
-  };
-
-  type TestType2 = StaticRef<typeof TestType2>;
-  const TestType2 = Ref(definition, "example2");
-
-  console.log(JSON.stringify(TestType2, undefined, 2));
-
-  type T = ExpandType<TestType2>;
-
-  const _example2: TestType2 = {
-    foo: 123456,
-  };
 }

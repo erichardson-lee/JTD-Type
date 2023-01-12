@@ -1,6 +1,5 @@
 import {
   CreateSchemaBase,
-  Forms,
   Invalid,
   JtdShared,
   JtdT,
@@ -84,25 +83,4 @@ export function Properties<
 
   const s = CreateSchemaBase("Properties", opts);
   return Object.assign(s, data) as JtdProperties<Props, OProps, AddProps> & O;
-}
-
-//
-// Testing
-//
-if (import.meta.main) {
-  type TestType = StaticProperties<typeof TestType>;
-  const TestType = Properties(
-    {
-      properties: { test: Forms.Empty(), foo: Forms.Type("float64") },
-      optionalProperties: { bar: Forms.Type("int8", { nullable: true }) },
-      additionalProperties: false,
-    },
-  );
-  console.log(JSON.stringify(TestType, undefined, 2));
-
-  const _example: TestType = {
-    test: {},
-    foo: 212345,
-    bar: 123e5,
-  };
 }

@@ -1,7 +1,7 @@
+import { Properties } from "./index.ts";
 import { JtdProperties, StaticProperties } from "./JtdProperties.ts";
 import {
   CreateSchemaBase,
-  Forms,
   Invalid,
   JtdSchema,
   JtdShared,
@@ -62,14 +62,31 @@ type VarMap<Ex = {}> = {
   [k: string]: Variant & Ex;
 };
 
-// deno-lint-ignore ban-types
-type CompileVariants<Vars extends VarMap<{}>> = {
+type CompileVariants<Vars extends VarMap<unknown>> = {
   [k in keyof Vars]: JtdProperties<
     Vars[k]["properties"],
     Vars[k]["optionalProperties"],
     Vars[k]["additionalProperties"]
   >;
 };
+
+function CompileVariants<VM extends VarMap<unknown>>(
+  varMap: VM,
+): CompileVariants<VM> {
+  //@ts-expect-error Force type
+  const ret: CompileVariants<VM> = {};
+
+  for (const k of (Object.keys(varMap)) as (keyof VM)[]) {
+    ret[k] = Properties({
+      properties: varMap[k].properties,
+      //@ts-expect-error Weird Error Checking
+      optionalProperties: varMap[k].optionalProperties,
+      additionalProperties: varMap[k].additionalProperties,
+    }, { metadata: varMap[k].metadata });
+  }
+
+  return ret;
+}
 
 export function Discriminator<
   D extends string,
@@ -108,48 +125,6 @@ export function Discriminator<
 
   return Object.assign(s, {
     discriminator,
-    mapping: Object.values(mapping).map((variant) =>
-      Forms.Properties(
-        {
-          properties: variant.properties,
-          //@ts-expect-error Intentional Type Mismatch
-          optionalProperties: variant.optionalProperties,
-          additionalProperties: variant.additionalProperties,
-        },
-        { metadata: variant.metadata },
-      )
-    ),
+    mapping: CompileVariants(mapping),
   }) as JtdDiscriminator<D, CompileVariants<VMap>> & O;
-}
-
-//
-// Testing
-//
-if (import.meta.main) {
-  type TestType = StaticDiscriminator<typeof TestType>;
-  const TestType = Discriminator("test", {
-    foo: {
-      properties: {
-        foo: Forms.Empty(),
-      },
-      optionalProperties: {},
-      additionalProperties: false,
-    },
-    bar: {
-      properties: { brightness: Forms.Type("int8") },
-      optionalProperties: { height: Forms.Type("int16") },
-      additionalProperties: false,
-    },
-  });
-  console.log(JSON.stringify(TestType, undefined, 2));
-
-  const _example: TestType = {
-    test: "foo",
-    foo: ["Anything goes here (it's an empty schema)"],
-  };
-  const _example2: TestType = {
-    test: "bar",
-    brightness: 123,
-    height: 486,
-  };
 }

@@ -12,22 +12,3 @@ export type StaticEmpty<JtdEmpty> = unknown;
 export function Empty<O extends JtdShared>(opts?: Narrow<O>) {
   return CreateSchemaBase("Empty", opts) as JtdEmpty & O;
 }
-
-//
-// Testing
-//
-if (import.meta.main) {
-  type TestType = StaticEmpty<typeof TestType>;
-  const TestType = Empty({
-    metadata: { foo: { bar: "baz" } },
-    nullable: false,
-  });
-
-  console.log(JSON.stringify(TestType, undefined, 2));
-
-  // should allow anything
-  const _example: TestType = {
-    foo: "bar",
-    baz: 1243,
-  };
-}
