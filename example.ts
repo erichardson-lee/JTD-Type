@@ -1,4 +1,4 @@
-import { Forms, Static } from "https://deno.land/x/jtd_type/mod.ts";
+import { Forms, Static } from "./mod.ts";
 
 type UserInfo = Static<typeof UserInfo>;
 const UserInfo = Forms.Properties({

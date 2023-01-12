@@ -1,3 +1,4 @@
+import { Properties } from "./index.ts";
 import { JtdProperties, StaticProperties } from "./JtdProperties.ts";
 import {
   CreateSchemaBase,
@@ -6,6 +7,7 @@ import {
   JtdSchema,
   JtdShared,
   JtdT,
+  Kind,
   Narrow,
 } from "./_api.ts";
 
@@ -71,6 +73,24 @@ type CompileVariants<Vars extends VarMap<{}>> = {
   >;
 };
 
+function CompileVariants<VM extends VarMap<{}>>(
+  varMap: VM,
+): CompileVariants<VM> {
+  //@ts-expect-error Force type
+  const ret: CompileVariants<VM> = {};
+
+  for (const k of (Object.keys(varMap)) as (keyof VM)[]) {
+    ret[k] = Properties({
+      properties: varMap[k].properties,
+      //@ts-expect-error Weird Error Checking
+      optionalProperties: varMap[k].optionalProperties,
+      additionalProperties: varMap[k].additionalProperties,
+    }, { metadata: varMap[k].metadata });
+  }
+
+  return ret;
+}
+
 export function Discriminator<
   D extends string,
   VMap extends VarMap<{
@@ -108,19 +128,6 @@ export function Discriminator<
 
   return Object.assign(s, {
     discriminator,
-    mapping: Object.fromEntries(
-      Object.entries(mapping).map(([name, variant]) => [
-        name,
-        Forms.Properties(
-          {
-            properties: variant.properties,
-            //@ts-expect-error Intentional Type Mismatch
-            optionalProperties: variant.optionalProperties,
-            additionalProperties: variant.additionalProperties,
-          },
-          { metadata: variant.metadata },
-        ),
-      ]),
-    ),
+    mapping: CompileVariants(mapping),
   }) as JtdDiscriminator<D, CompileVariants<VMap>> & O;
 }
