@@ -2,12 +2,10 @@ import { Properties } from "./index.ts";
 import { JtdProperties, StaticProperties } from "./JtdProperties.ts";
 import {
   CreateSchemaBase,
-  Forms,
   Invalid,
   JtdSchema,
   JtdShared,
   JtdT,
-  Kind,
   Narrow,
 } from "./_api.ts";
 
@@ -64,8 +62,7 @@ type VarMap<Ex = {}> = {
   [k: string]: Variant & Ex;
 };
 
-// deno-lint-ignore ban-types
-type CompileVariants<Vars extends VarMap<{}>> = {
+type CompileVariants<Vars extends VarMap<unknown>> = {
   [k in keyof Vars]: JtdProperties<
     Vars[k]["properties"],
     Vars[k]["optionalProperties"],
@@ -73,7 +70,7 @@ type CompileVariants<Vars extends VarMap<{}>> = {
   >;
 };
 
-function CompileVariants<VM extends VarMap<{}>>(
+function CompileVariants<VM extends VarMap<unknown>>(
   varMap: VM,
 ): CompileVariants<VM> {
   //@ts-expect-error Force type
