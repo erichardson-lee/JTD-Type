@@ -38,3 +38,11 @@ const print = (d: unknown) => console.log(JSON.stringify(d, undefined, 2));
 print(UserInfo); // Log the Data type
 print(fred); // Log the Data
 ```
+
+## Development
+
+### Release Process
+
+```shell
+deno task npm_build
+```
