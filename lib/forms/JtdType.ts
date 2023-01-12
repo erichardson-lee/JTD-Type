@@ -41,15 +41,3 @@ export function Type<T extends JtdTypes, O extends JtdShared>(
   const s = CreateSchemaBase("Type", opts);
   return Object.assign(s, { type }) as JtdType<T> & O;
 }
-
-//
-// Testing
-//
-if (import.meta.main) {
-  type TestType = StaticType<typeof TestType>;
-  const TestType = Type("int32");
-
-  console.log(JSON.stringify(TestType, undefined, 2));
-
-  const _example: TestType = 1234;
-}

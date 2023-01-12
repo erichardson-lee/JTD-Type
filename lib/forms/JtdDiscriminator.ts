@@ -108,48 +108,19 @@ export function Discriminator<
 
   return Object.assign(s, {
     discriminator,
-    mapping: Object.values(mapping).map((variant) =>
-      Forms.Properties(
-        {
-          properties: variant.properties,
-          //@ts-expect-error Intentional Type Mismatch
-          optionalProperties: variant.optionalProperties,
-          additionalProperties: variant.additionalProperties,
-        },
-        { metadata: variant.metadata },
-      )
+    mapping: Object.fromEntries(
+      Object.entries(mapping).map(([name, variant]) => [
+        name,
+        Forms.Properties(
+          {
+            properties: variant.properties,
+            //@ts-expect-error Intentional Type Mismatch
+            optionalProperties: variant.optionalProperties,
+            additionalProperties: variant.additionalProperties,
+          },
+          { metadata: variant.metadata },
+        ),
+      ]),
     ),
   }) as JtdDiscriminator<D, CompileVariants<VMap>> & O;
-}
-
-//
-// Testing
-//
-if (import.meta.main) {
-  type TestType = StaticDiscriminator<typeof TestType>;
-  const TestType = Discriminator("test", {
-    foo: {
-      properties: {
-        foo: Forms.Empty(),
-      },
-      optionalProperties: {},
-      additionalProperties: false,
-    },
-    bar: {
-      properties: { brightness: Forms.Type("int8") },
-      optionalProperties: { height: Forms.Type("int16") },
-      additionalProperties: false,
-    },
-  });
-  console.log(JSON.stringify(TestType, undefined, 2));
-
-  const _example: TestType = {
-    test: "foo",
-    foo: ["Anything goes here (it's an empty schema)"],
-  };
-  const _example2: TestType = {
-    test: "bar",
-    brightness: 123,
-    height: 486,
-  };
 }
