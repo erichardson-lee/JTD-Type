@@ -1,5 +1,6 @@
 import {
   CreateSchemaBase,
+  ExpandType,
   JtdSchema,
   JtdShared,
   JtdT,
@@ -7,10 +8,14 @@ import {
   Static,
 } from "./_api.ts";
 
-// deno-lint-ignore no-explicit-any
-export type JtdElements<E extends JtdSchema = any> = JtdT<"Elements"> & {
-  elements: E;
-};
+export type JtdElements<
+  // deno-lint-ignore no-explicit-any
+  E extends JtdSchema = any,
+  O extends JtdShared = JtdShared,
+> = ExpandType<
+  & { elements: E }
+  & JtdT<"Elements", O>
+>;
 
 export type StaticElements<E extends JtdElements> = Static<E["elements"]>[];
 
@@ -20,10 +25,13 @@ export type StaticElements<E extends JtdElements> = Static<E["elements"]>[];
  * @param opts Options for the schema
  * @returns JTD Elements Schema
  */
-export function Elements<E extends JtdSchema, O extends JtdShared>(
+export function Elements<
+  E extends JtdSchema,
+  O extends JtdShared = { nullable: undefined; metadata: undefined },
+>(
   elements: E,
   opts?: Narrow<O>,
 ) {
   const s = CreateSchemaBase("Elements", opts);
-  return Object.assign(s, { elements }) as JtdElements<E> & O;
+  return Object.assign(s, { elements }) as unknown as JtdElements<E, O>;
 }

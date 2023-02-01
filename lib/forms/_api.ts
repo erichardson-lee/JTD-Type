@@ -61,7 +61,9 @@ export * as Forms from "../forms_functions.ts";
 export type { Static } from "../static.ts";
 
 /** JTD type (Util Type to add Shared Schema & Kind) */
-export type JtdT<Type extends Kinds> = JtdShared & { [Kind]: Type };
+export type JtdT<Type extends Kinds, O extends JtdShared = JtdShared> =
+  & { [Kind]: Type }
+  & O;
 
 export function CreateSchemaBase<K extends Kinds, O extends JtdShared>(
   kind: K,
@@ -77,7 +79,8 @@ export function CreateSchemaBase<K extends Kinds, O extends JtdShared>(
   };
 }
 
-type ExpandType<T> = T extends infer O ? { [k in keyof O]: O[k] } : never;
+export type ExpandType<T> = T extends infer O ? { [k in keyof O]: O[k] }
+  : never;
 
 // deno-lint-ignore ban-types
 function _sanitiseObj(o: object): object {

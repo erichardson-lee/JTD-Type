@@ -1,5 +1,6 @@
 import {
   CreateSchemaBase,
+  ExpandType,
   Invalid,
   JtdShared,
   JtdT,
@@ -12,13 +13,15 @@ export type JtdProperties<
   Props extends SchemaObj = SchemaObj,
   OptProps extends SchemaObj = SchemaObj,
   AddProps extends boolean | undefined = boolean | undefined,
-> = JtdT<"Properties"> & {
-  properties: Props;
-  optionalProperties: OptProps;
-  additionalProperties: AddProps;
-};
-
-type ExpandType<T> = T extends infer O ? { [k in keyof O]: O[k] } : never;
+  O extends JtdShared = JtdShared,
+> = ExpandType<
+  & {
+    properties: Props;
+    optionalProperties: OptProps;
+    additionalProperties: AddProps;
+  }
+  & JtdT<"Properties", O>
+>;
 
 export type StaticProperties<P extends JtdProperties> = ExpandType<
   // deno-lint-ignore ban-types
@@ -50,7 +53,7 @@ export function Properties<
     }
     & SchemaObj,
   AddProps extends boolean,
-  O extends JtdShared,
+  O extends JtdShared = { nullable: undefined; metadata: undefined },
 >(
   data: {
     properties: Props;
@@ -82,5 +85,10 @@ export function Properties<
   }
 
   const s = CreateSchemaBase("Properties", opts);
-  return Object.assign(s, data) as JtdProperties<Props, OProps, AddProps> & O;
+  return Object.assign(s, data) as unknown as JtdProperties<
+    Props,
+    OProps,
+    AddProps,
+    O
+  >;
 }

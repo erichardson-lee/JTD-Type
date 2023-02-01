@@ -2,6 +2,7 @@ import { Properties } from "./index.ts";
 import { JtdProperties, StaticProperties } from "./JtdProperties.ts";
 import {
   CreateSchemaBase,
+  ExpandType,
   Invalid,
   JtdSchema,
   JtdShared,
@@ -9,17 +10,17 @@ import {
   Narrow,
 } from "./_api.ts";
 
-type ExpandType<T> = T extends infer O ? { [k in keyof O]: O[k] } : never;
-
 export type JtdDiscriminator<
   Discriminator extends string = string,
   // deno-lint-ignore no-explicit-any ban-types
   VMap extends { [key: string]: JtdProperties<any, any, any> } = {},
+  O extends JtdShared = JtdShared,
 > = ExpandType<
-  JtdT<"Discriminator"> & {
+  & {
     discriminator: Discriminator;
     mapping: VMap;
   }
+  & JtdT<"Discriminator", O>
 >;
 
 type GetVariants<
@@ -100,7 +101,7 @@ export function Discriminator<
       >;
     };
   }>,
-  O extends JtdShared = JtdShared,
+  O extends JtdShared = { nullable: undefined; metadata: undefined },
 >(discriminator: D, mapping: VMap, opts?: Narrow<O>) {
   const collisions = Object.entries(mapping)
     .filter(
@@ -126,5 +127,5 @@ export function Discriminator<
   return Object.assign(s, {
     discriminator,
     mapping: CompileVariants(mapping),
-  }) as JtdDiscriminator<D, CompileVariants<VMap>> & O;
+  }) as unknown as JtdDiscriminator<D, CompileVariants<VMap>, O>;
 }

@@ -1,5 +1,6 @@
 import {
   CreateSchemaBase,
+  ExpandType,
   JtdDefinitions,
   JtdShared,
   JtdT,
@@ -20,10 +21,11 @@ export type JtdRef<
   DefT extends JtdDefinitions = JtdDefinitions,
   Ref extends SKeys<DefT> = SKeys<DefT>,
   CDef extends CompiledDefs<DefT> = CompiledDefs<DefT>,
-> = JtdT<"Ref"> & {
-  [Def]: CDef;
-  ref: Ref;
-};
+  O extends JtdShared = JtdShared,
+> = ExpandType<
+  & { [Def]: CDef; ref: Ref }
+  & JtdT<"Ref", O>
+>;
 
 export type StaticRef<R extends JtdRef> = R[typeof Def][R["ref"]];
 // export type StaticRef<R extends JtdRef> = GetRefType<R> extends JtdSchema
@@ -42,7 +44,7 @@ export type StaticRef<R extends JtdRef> = R[typeof Def][R["ref"]];
 export function Ref<
   DefT extends JtdDefinitions,
   Ref extends SKeys<DefT>,
-  O extends JtdShared,
+  O extends JtdShared = { nullable: undefined; metadata: undefined },
 >(definitions: DefT, ref: Ref, opts?: Narrow<O>) {
   if (!Object.hasOwn(definitions, ref)) {
     throw new SyntaxError(
@@ -54,5 +56,5 @@ export function Ref<
   return Object.assign(s, {
     [Def]: definitions as CompiledDefs<DefT>,
     ref,
-  }) as JtdRef<DefT, Ref, CompiledDefs<DefT>> & O;
+  }) as unknown as JtdRef<DefT, Ref, CompiledDefs<DefT>, O>;
 }

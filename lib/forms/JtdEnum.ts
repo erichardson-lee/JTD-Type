@@ -1,6 +1,18 @@
-import { CreateSchemaBase, JtdShared, JtdT, Narrow } from "./_api.ts";
+import {
+  CreateSchemaBase,
+  ExpandType,
+  JtdShared,
+  JtdT,
+  Narrow,
+} from "./_api.ts";
 
-export type JtdEnum<E extends string = string> = JtdT<"Enum"> & { enum: E[] };
+export type JtdEnum<
+  E extends string = string,
+  O extends JtdShared = JtdShared,
+> = ExpandType<
+  & { enum: E[] }
+  & JtdT<"Enum", O>
+>;
 
 export type StaticEnum<E extends JtdEnum> = E["enum"] extends (infer K)[] ? K
   : never;
@@ -11,7 +23,10 @@ export type StaticEnum<E extends JtdEnum> = E["enum"] extends (infer K)[] ? K
  * @param opts Options for the schema
  * @returns JTD Enum Schema
  */
-export function Enum<E extends string, O extends JtdShared>(
+export function Enum<
+  E extends string,
+  O extends JtdShared = { nullable: undefined; metadata: undefined },
+>(
   values: Narrow<E[]>,
   opts?: Narrow<O>,
 ) {
@@ -20,5 +35,5 @@ export function Enum<E extends string, O extends JtdShared>(
   }
 
   const s = CreateSchemaBase("Enum", opts);
-  return Object.assign(s, { enum: values }) as JtdEnum<E> & O;
+  return Object.assign(s, { enum: values }) as unknown as JtdEnum<E, O>;
 }
